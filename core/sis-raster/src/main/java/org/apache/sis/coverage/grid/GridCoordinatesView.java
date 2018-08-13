@@ -120,16 +120,8 @@ final class GridCoordinatesView /* implements GridCoordinates */ {
          */
         if (object instanceof GridCoordinatesView) {
             final GridCoordinatesView that = (GridCoordinatesView) object;
-            final int dimension = getDimension();
-            if (dimension == that.getDimension()) {
-                // TODO: use Arrays.equals(...) with JDK9 instead.
-                for (int i=0; i<dimension; i++) {
-                    if (ordinates[offset + i] != that.ordinates[that.offset + i]) {
-                        return false;
-                    }
-                }
-                return true;
-            }
+            return Arrays.equals(this.ordinates, this.offset, this.offset + this.getDimension(),
+                                 that.ordinates, that.offset, that.offset + that.getDimension());
         }
         return false;
     }

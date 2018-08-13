@@ -209,7 +209,6 @@ final class TransformingReader extends Transformer implements XMLEventReader {
      * @param  event  the event read from the underlying event reader.
      * @return the converted event (may be the same instance).
      */
-    @SuppressWarnings("unchecked")      // TODO: remove on JDK9
     private XMLEvent convert(XMLEvent event) throws XMLStreamException {
         switch (event.getEventType()) {
             case ATTRIBUTE: {

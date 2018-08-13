@@ -62,6 +62,8 @@ public final class JDK9 {
      * @param  <E>       type of elements.
      * @param  elements  the elements to put in an unmodifiable set.
      * @return an unmodifiable set of the given elements.
+     *
+     * @todo before to replace by JDK9 method, verify if order is preserved.
      */
     @SafeVarargs
     public static <E> Set<E> setOf(final E... elements) {

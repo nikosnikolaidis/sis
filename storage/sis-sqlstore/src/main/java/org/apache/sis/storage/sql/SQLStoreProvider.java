@@ -17,7 +17,6 @@
 package org.apache.sis.storage.sql;
 
 import java.util.Map;
-import java.util.HashMap;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
@@ -144,9 +143,7 @@ public class SQLStoreProvider extends DataStoreProvider {
         final NameFactory factory = DefaultFactories.forBuildin(NameFactory.class);
         NameSpace ns = tableNS;
         if (ns == null) {
-            final Map<String,String> properties = new HashMap<>(4);     // TODO: use Map.of with JDK9.
-            properties.put("separator",      ".");
-            properties.put("separator.head", ":");
+            final Map<String,String> properties = Map.of("separator", ".", "separator.head", ":");
             tableNS = ns = factory.createNameSpace(factory.createLocalName(null, "database"), properties);
         }
         return factory.createGenericName(ns, names);

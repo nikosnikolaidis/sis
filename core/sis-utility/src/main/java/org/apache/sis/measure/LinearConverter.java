@@ -281,8 +281,7 @@ final class LinearConverter extends AbstractConverter implements LenientComparab
      */
     @Override
     public double convert(final double value) {
-        // TODO: use JDK9' Math.fma(…) and verify if it solve the accuracy issue in LinearConverterTest.inverse().
-        return (value * scale + offset) / divisor;
+        return Math.fma(value, scale, offset) / divisor;
     }
 
     /**

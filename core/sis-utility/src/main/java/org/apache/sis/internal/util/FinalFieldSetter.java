@@ -17,6 +17,7 @@
 package org.apache.sis.internal.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.io.InvalidClassException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -151,7 +152,6 @@ public final class FinalFieldSetter<T> implements PrivilegedAction<FinalFieldSet
      * @return the exception to throw.
      */
     public static RuntimeException cloneFailure(final ReflectiveOperationException cause) {
-        return new RuntimeException(cause);
-        // TODO: use InaccessibleObjectException in JDK9.
+        return (InaccessibleObjectException) new InaccessibleObjectException().initCause(cause);
     }
 }

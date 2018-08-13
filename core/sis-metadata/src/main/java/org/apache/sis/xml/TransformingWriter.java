@@ -338,7 +338,6 @@ final class TransformingWriter extends Transformer implements XMLEventWriter {
      * @param  event  the event using JAXB namespaces.
      */
     @Override
-    @SuppressWarnings("unchecked")      // TODO: remove on JDK9
     public void add(XMLEvent event) throws XMLStreamException {
         switch (event.getEventType()) {
             case ATTRIBUTE: {
