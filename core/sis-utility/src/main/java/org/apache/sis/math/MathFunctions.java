@@ -326,7 +326,7 @@ public final class MathFunctions extends Static {
      * @since 0.6
      */
     public static double asinh(final double x) {
-        return Math.log(x + Math.sqrt(x*x + 1));
+        return Math.log(x + Math.sqrt(Math.fma(x,x, 1)));
     }
 
     /**
@@ -341,7 +341,7 @@ public final class MathFunctions extends Static {
      * @since 0.6
      */
     public static double acosh(final double x) {
-        return Math.log(x + Math.sqrt(x*x - 1));
+        return Math.log(x + Math.sqrt(Math.fma(x,x, -1)));
     }
 
     /**

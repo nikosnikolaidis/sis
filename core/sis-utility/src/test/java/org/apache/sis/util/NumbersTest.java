@@ -187,7 +187,7 @@ public final strictfp class NumbersTest extends TestCase {
      */
     @Test
     public void testCast() {
-        @SuppressWarnings("UnnecessaryBoxing")
+        @SuppressWarnings({"UnnecessaryBoxing", "deprecation"})
         final Integer value = new Integer(10); // Intentionally a new instance.
         assertEquals(Byte   .valueOf((byte)   10), cast(value, Byte   .class));
         assertEquals(Short  .valueOf((short)  10), cast(value, Short  .class));

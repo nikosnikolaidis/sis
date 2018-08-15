@@ -508,9 +508,9 @@ public abstract class DatumShiftGrid<C extends Quantity<C>, T extends Quantity<T
         for (int dim = 0; dim < n; dim++) {
             double r0 = getCellValue(dim, ix, iy  );
             double r1 = getCellValue(dim, ix, iy+1);
-            r0 +=  gridX * (getCellValue(dim, ix+1, iy  ) - r0);
-            r1 +=  gridX * (getCellValue(dim, ix+1, iy+1) - r1);
-            vector[dim] = gridY * (r1 - r0) + r0;
+            r0 = Math.fma(gridX, getCellValue(dim, ix+1, iy  ) - r0, r0);
+            r1 = Math.fma(gridX, getCellValue(dim, ix+1, iy+1) - r1, r1);
+            vector[dim] = Math.fma(gridY, r1 - r0, r0);
         }
     }
 

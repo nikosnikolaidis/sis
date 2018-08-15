@@ -1140,7 +1140,7 @@ public class MilitaryGridReferenceSystem extends ReferencingByIdentifiers {
          */
         @Override
         public long estimateSize() {
-            return (xEnd - (long) gridX) * Math.abs(yEnd - (long) yStart) / (step * (long) step);
+            return (xEnd - (long) gridX) * Math.abs(yEnd - (long) yStart) / Math.multiplyFull(step, step);
         }
 
         /**

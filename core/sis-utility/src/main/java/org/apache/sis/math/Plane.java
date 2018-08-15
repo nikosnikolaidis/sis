@@ -167,7 +167,7 @@ public class Plane implements Cloneable, Serializable {
      * @return  the <var>x</var> value.
      */
     public final double x(final double y, final double z) {
-        return (z - (z0 + sy*y)) / sx;
+        return (z - Math.fma(y, sy, z0)) / sx;
     }
 
     /**
@@ -181,7 +181,7 @@ public class Plane implements Cloneable, Serializable {
      * @return  the <var>y</var> value.
      */
     public final double y(final double x, final double z) {
-        return (z - (z0 + sx*x)) / sy;
+        return (z - Math.fma(x, sx, z0)) / sy;
     }
 
     /**
@@ -197,7 +197,7 @@ public class Plane implements Cloneable, Serializable {
      * @see #z0()
      */
     public final double z(final double x, final double y) {
-        return z0 + sx*x + sy*y;
+        return Math.fma(x, sx, Math.fma(y, sy, z0));
     }
 
     /**

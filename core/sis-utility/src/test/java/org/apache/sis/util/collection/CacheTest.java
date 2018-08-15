@@ -228,10 +228,11 @@ public final strictfp class CacheTest extends TestCase {
             /**
              * Puts random values in the map.
              */
-            @SuppressWarnings({"UnnecessaryBoxing", "CallToThreadYield", "NumberEquality"})
+            @SuppressWarnings({"CallToThreadYield", "NumberEquality"})
             @Override public void run() {
                 for (int i=0; i<count; i++) {
                     final Integer key = i;
+                    @SuppressWarnings({"UnnecessaryBoxing", "deprecation"})
                     final Integer expected = new Integer(i * i);        // We really want new instance.
                     final Integer value;
                     try {

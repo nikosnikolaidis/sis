@@ -259,7 +259,7 @@ class ProjectiveTransform extends AbstractLinearTransform implements ExtendedPre
                          * getting 2D points from 3D points. In such case, the fact that the excluded dimensions had
                          * NaN values should not force the retained dimensions to get NaN values.
                          */
-                        sum += srcPts[srcOff + i] * e;
+                        sum = Math.fma(srcPts[srcOff + i], e, sum);
                     }
                 }
                 buffer[j] = sum;
@@ -322,8 +322,8 @@ class ProjectiveTransform extends AbstractLinearTransform implements ExtendedPre
                 double sum = elt[mix + srcDim];
                 for (int i=0; i<srcDim; i++) {
                     final double e = elt[mix++];
-                    if (e != 0) { // See comment in transform(double[], ...)
-                        sum += srcPts[srcOff + i] * e;
+                    if (e != 0) {                                   // See comment in transform(double[], ...)
+                        sum = Math.fma(srcPts[srcOff + i], e, sum);
                     }
                 }
                 buffer[j] = sum;
@@ -359,7 +359,7 @@ class ProjectiveTransform extends AbstractLinearTransform implements ExtendedPre
                 for (int i=0; i<srcDim; i++) {
                     final double e = elt[mix++];
                     if (e != 0) {                                   // See comment in transform(double[], ...)
-                        sum += srcPts[srcOff + i] * e;
+                        sum = Math.fma(srcPts[srcOff + i], e, sum);
                     }
                 }
                 buffer[j] = sum;
@@ -394,7 +394,7 @@ class ProjectiveTransform extends AbstractLinearTransform implements ExtendedPre
                 for (int i=0; i<srcDim; i++) {
                     final double e = elt[mix++];
                     if (e != 0) {                                   // See comment in transform(double[], ...)
-                        sum += srcPts[srcOff + i] * e;
+                        sum = Math.fma(srcPts[srcOff + i], e, sum);
                     }
                 }
                 buffer[j] = sum;

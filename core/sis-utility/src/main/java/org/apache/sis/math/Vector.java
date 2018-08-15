@@ -173,7 +173,7 @@ public abstract class Vector extends AbstractList<Number> implements RandomAcces
         Class<? extends Number> type;
         type = Numbers.widestClass(first, increment);
         type = Numbers.widestClass(type,
-               Numbers.narrowestClass(first.doubleValue() + increment.doubleValue() * (length-1)));
+               Numbers.narrowestClass(Math.fma(length-1, increment.doubleValue(), first.doubleValue())));
         return createSequence(type, first, increment, length);
     }
 

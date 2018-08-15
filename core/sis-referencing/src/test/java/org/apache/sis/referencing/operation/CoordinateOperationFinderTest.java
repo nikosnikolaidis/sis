@@ -559,7 +559,7 @@ public final strictfp class CoordinateOperationFinderTest extends MathTransformT
         assertInstanceOf("operation", Conversion.class, operation);
 
         transform = operation.getMathTransform();
-        tolerance = 1E-12;
+        tolerance = 1E-11;
         verifyTransform(new double[] {
             // December 31, 1899 at 12:00 UTC in seconds.
             CommonCRS.Temporal.DUBLIN_JULIAN.datum().getOrigin().getTime() / 1000
@@ -878,7 +878,7 @@ public final strictfp class CoordinateOperationFinderTest extends MathTransformT
             0, 0, 0, 1
         }), ((LinearTransform) transform).getMatrix(), 1E-12);
 
-        tolerance = 1E-12;
+        tolerance = 1E-6;
         verifyTransform(new double[] {
             -5, -8, CommonCRS.Temporal.DUBLIN_JULIAN.datum().getOrigin().getTime() / 1000
         }, new double[] {

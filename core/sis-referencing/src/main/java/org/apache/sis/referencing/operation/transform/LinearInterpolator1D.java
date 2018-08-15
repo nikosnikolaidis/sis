@@ -234,19 +234,19 @@ final class LinearInterpolator1D extends AbstractMathTransform1D implements Seri
                 x -= i;
                 final double y0 = values[i  ];
                 final double y1 = values[i+1];
-                y = y0 * (1-x) + y1 * x;
+                y = Math.fma(y1, x, y0 * (1-x));
                 d = y1 - y0;
             } else {
                 // x is after the last available value.
                 final double y1 = values[n];
                 d = y1 - values[n-1];
-                y = (x - n) * d + y1;
+                y = Math.fma(x-n, d, y1);
             }
         } else {
             // x is before the first available value.
             final double y0 = values[0];
             d = values[1] - y0;
-            y = x * d + y0;
+            y = Math.fma(x, d, y0);
         }
         if (dstPts != null) {
             dstPts[dstOff] = y;
@@ -266,16 +266,16 @@ final class LinearInterpolator1D extends AbstractMathTransform1D implements Seri
             final int n = values.length - 1;
             if (i < n) {
                 x -= i;
-                return values[i] * (1-x) + values[i+1] * x;
+                return Math.fma(values[i+1], x, values[i] * (1-x));
             } else {
                 // x is after the last available value.
                 final double y1 = values[n];
-                return (x - n) * (y1 - values[n-1]) + y1;
+                return Math.fma(x-n, y1 - values[n-1], y1);
             }
         } else {
             // x is before the first available value.
             final double y0 = values[0];
-            return x * (values[1] - y0) + y0;
+            return Math.fma(x, values[1] - y0, y0);
         }
     }
 

@@ -37,12 +37,12 @@ public final strictfp class AngleConverterTest extends TestCase {
      * Tests conversions to {@link Double}.
      */
     @Test
-    @SuppressWarnings("UnnecessaryBoxing")
     public void testDouble() {
         final ObjectConverter<Angle,Double> c1 = AngleConverter.INSTANCE;
         final ObjectConverter<Double,Angle> c2 = AngleConverter.Inverse.INSTANCE;
-        final Angle  v1 = new Angle (30.25);
+        @SuppressWarnings({"UnnecessaryBoxing", "deprecation"})
         final Double v2 = new Double(30.25);
+        final Angle  v1 = new Angle (30.25);
         assertEquals(v2, c1.apply(v1));
         assertEquals(v1, c2.apply(v2));
         assertSame(c2, c1.inverse());

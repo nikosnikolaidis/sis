@@ -108,7 +108,6 @@ public final strictfp class WeakValueHashMapTest extends TestCase {
      *
      * @param weakMap The map implementation to test.
      */
-    @SuppressWarnings("UnnecessaryBoxing")
     static void testWeakReferences(final Map<Integer,Integer> weakMap) throws InterruptedException {
         final Random random = new Random();
         for (int pass=0; pass<NUM_RETRY; pass++) {
@@ -118,8 +117,9 @@ public final strictfp class WeakValueHashMapTest extends TestCase {
                 /*
                  * We really want new instances here.
                  */
-                final Integer key   = new Integer(random.nextInt(SAMPLE_SIZE));
-                final Integer value = new Integer(random.nextInt(SAMPLE_SIZE));
+                @SuppressWarnings({"UnnecessaryBoxing", "deprecation"})
+                final Integer key   = new Integer(random.nextInt(SAMPLE_SIZE)),
+                              value = new Integer(random.nextInt(SAMPLE_SIZE));
                 if (random.nextBoolean()) {
                     /*
                      * Tests addition.
@@ -205,9 +205,10 @@ public final strictfp class WeakValueHashMapTest extends TestCase {
     @SuppressWarnings("UnnecessaryBoxing")
     public void testIdentityComparisons() {
         final WeakValueHashMap<Integer,Integer> weakMap = new WeakValueHashMap<>(Integer.class, true);
+        @SuppressWarnings({"UnnecessaryBoxing", "deprecation"})
+        final Integer k3 = new Integer(10);                             // Really want a new instance.
         final Integer k1 = 10;
         final Integer k2 = 20;
-        final Integer k3 = new Integer(10);         // Really want a new instance.
         final Integer v1 = 1;
         final Integer v2 = 2;
         final Integer v3 = 3;

@@ -246,7 +246,7 @@ class LinearTransform1D extends AbstractMathTransform1D implements LinearTransfo
                             final boolean derivate)
     {
         if (dstPts != null) {
-            dstPts[dstOff] = offset + scale*srcPts[srcOff];
+            dstPts[dstOff] = Math.fma(srcPts[srcOff], scale, offset);
         }
         return derivate ? new Matrix1(scale) : null;
     }
@@ -261,13 +261,13 @@ class LinearTransform1D extends AbstractMathTransform1D implements LinearTransfo
     {
         if (srcPts != dstPts || srcOff >= dstOff) {
             while (--numPts >= 0) {
-                dstPts[dstOff++] = offset + scale * srcPts[srcOff++];
+                dstPts[dstOff++] = Math.fma(srcPts[srcOff++], scale, offset);
             }
         } else {
             srcOff += numPts;
             dstOff += numPts;
             while (--numPts >= 0) {
-                dstPts[--dstOff] = offset + scale * srcPts[--srcOff];
+                dstPts[--dstOff] = Math.fma(srcPts[--srcOff], scale, offset);
             }
         }
     }
@@ -283,13 +283,13 @@ class LinearTransform1D extends AbstractMathTransform1D implements LinearTransfo
     {
         if (srcPts != dstPts || srcOff >= dstOff) {
             while (--numPts >= 0) {
-                dstPts[dstOff++] = (float) (offset + scale * srcPts[srcOff++]);
+                dstPts[dstOff++] = (float) Math.fma(srcPts[srcOff++], scale, offset);
             }
         } else {
             srcOff += numPts;
             dstOff += numPts;
             while (--numPts >= 0) {
-                dstPts[--dstOff] = (float) (offset + scale * srcPts[--srcOff]);
+                dstPts[--dstOff] = (float) Math.fma(srcPts[--srcOff], scale, offset);
             }
         }
     }
@@ -304,7 +304,7 @@ class LinearTransform1D extends AbstractMathTransform1D implements LinearTransfo
                           final float [] dstPts, int dstOff, int numPts)
     {
         while (--numPts >= 0) {
-            dstPts[dstOff++] = (float) (offset + scale * srcPts[srcOff++]);
+            dstPts[dstOff++] = (float) Math.fma(srcPts[srcOff++], scale, offset);
         }
     }
 
@@ -317,7 +317,7 @@ class LinearTransform1D extends AbstractMathTransform1D implements LinearTransfo
                           final double[] dstPts, int dstOff, int numPts)
     {
         while (--numPts >= 0) {
-            dstPts[dstOff++] = offset + scale * srcPts[srcOff++];
+            dstPts[dstOff++] = Math.fma(srcPts[srcOff++], scale, offset);
         }
     }
 

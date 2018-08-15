@@ -104,7 +104,7 @@ public final strictfp class WeakHashSetTest extends TestCase {
             final WeakHashSet<Integer> weakSet = new WeakHashSet<>(Integer.class);
             final HashSet<Integer> strongSet = new HashSet<>();
             for (int i=0; i<SAMPLE_SIZE; i++) {
-                @SuppressWarnings("UnnecessaryBoxing")
+                @SuppressWarnings({"UnnecessaryBoxing", "deprecation"})
                 final Integer value = new Integer(random.nextInt(SAMPLE_SIZE));         // Really need new instances
                 if (random.nextBoolean()) {
                     /*

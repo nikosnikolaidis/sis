@@ -160,7 +160,7 @@ public class Line implements Cloneable, Serializable {
      * @see #x(double)
      */
     public final double y(final double x) {
-        return y0 + x*slope;
+        return Math.fma(x, slope, y0);
     }
 
     /**

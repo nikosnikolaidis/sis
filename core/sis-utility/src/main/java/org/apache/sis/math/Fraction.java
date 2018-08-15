@@ -210,8 +210,8 @@ public final class Fraction extends Number implements Comparable<Fraction>, Seri
      * @throws ArithmeticException if the result overflows.
      */
     public Fraction multiply(final Fraction other) {
-        return simplify(numerator   * (long) other.numerator,
-                        denominator * (long) other.denominator);
+        return simplify(Math.multiplyFull(numerator,   other.numerator),
+                        Math.multiplyFull(denominator, other.denominator));
     }
 
     /**
@@ -222,8 +222,8 @@ public final class Fraction extends Number implements Comparable<Fraction>, Seri
      * @throws ArithmeticException if the result overflows.
      */
     public Fraction divide(final Fraction other) {
-        return simplify(numerator   * (long) other.denominator,
-                        denominator * (long) other.numerator);
+        return simplify(Math.multiplyFull(numerator,   other.denominator),
+                        Math.multiplyFull(denominator, other.numerator));
     }
 
     /**
@@ -397,7 +397,8 @@ public final class Fraction extends Number implements Comparable<Fraction>, Seri
      */
     @Override
     public int compareTo(final Fraction other) {
-        return Long.signum(numerator * (long) other.denominator - other.numerator * (long) denominator);
+        return Long.signum(Math.multiplyFull(numerator, other.denominator)
+                         - Math.multiplyFull(other.numerator, denominator));
     }
 
     /**
