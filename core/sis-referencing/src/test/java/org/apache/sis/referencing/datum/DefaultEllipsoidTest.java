@@ -22,7 +22,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.test.xml.TestCase;
 import org.apache.sis.test.DependsOn;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.sis.test.ReferencingAssert.*;
 

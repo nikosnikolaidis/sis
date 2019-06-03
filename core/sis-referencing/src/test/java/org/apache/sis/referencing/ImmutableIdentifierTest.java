@@ -30,7 +30,7 @@ import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.test.DependsOnMethod;
 import org.apache.sis.test.xml.TestCase;
 import org.opengis.test.Validators;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.sis.test.ReferencingAssert.*;
 import static org.opengis.referencing.ReferenceIdentifier.*;

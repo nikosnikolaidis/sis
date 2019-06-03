@@ -26,7 +26,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.TestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.sis.test.Assert.*;
 import static org.apache.sis.test.TestUtilities.formatMetadata;

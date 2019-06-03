@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import org.apache.sis.math.Fraction;
 import org.apache.sis.test.TestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 import static org.apache.sis.util.Numbers.*;

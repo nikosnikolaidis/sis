@@ -422,6 +422,12 @@
         <version>${geoapi.version}</version>
         <type>pom</type>
         <scope>import</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.opengis</groupId>
@@ -523,6 +529,19 @@
         <version>1.7.22</version>               <!-- Must matches the version used by netCDF. -->
         <scope>test</scope>                     <!-- Should never be needed at compile time.  -->
       </dependency>
+
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit-jupiter-api.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit-jupiter-engine.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -533,8 +552,13 @@
        =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>   <!-- To be removed after https://issues.apache.org/jira/browse/SIS-469 is done. -->
@@ -563,6 +587,8 @@
     <sis.non-free.version>1.0</sis.non-free.version>                 <!-- Used only if "non-free" profile is enabled. -->
     <geoapi.version>3.0.1</geoapi.version>
     <jaxb.version>2.3.2</jaxb.version>
+    <junit-jupiter-api.version>${junit-jupiter-engine.version}</junit-jupiter-api.version>
+    <junit-jupiter-engine.version>5.4.2</junit-jupiter-engine.version>
   </properties>
 
   <profiles>
