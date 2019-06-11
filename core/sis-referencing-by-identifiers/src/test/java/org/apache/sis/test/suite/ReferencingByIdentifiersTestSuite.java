@@ -17,7 +17,7 @@
 package org.apache.sis.test.suite;
 
 import org.apache.sis.test.TestSuite;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.BeforeClass;
 
 
@@ -29,7 +29,7 @@ import org.junit.BeforeClass;
  * @since   0.8
  * @module
  */
-@Suite.SuiteClasses({
+@SelectClasses({
     org.apache.sis.referencing.gazetteer.LocationFormatTest.class,
     org.apache.sis.referencing.gazetteer.LocationTypeTest.class,
     org.apache.sis.referencing.gazetteer.ReferencingByIdentifiersTest.class,

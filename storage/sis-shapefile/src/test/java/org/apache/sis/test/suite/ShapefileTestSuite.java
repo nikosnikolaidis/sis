@@ -17,14 +17,14 @@
 package org.apache.sis.test.suite;
 
 import org.apache.sis.test.TestSuite;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.BeforeClass;
 
 
 /**
  * All tests from the {@code sis-shapefile} module, in rough dependency order.
  */
-@Suite.SuiteClasses({
+@SelectClasses({
     org.apache.sis.storage.shapefile.ShapeFileTest.class,
     org.apache.sis.internal.shapefile.jdbc.DBFConnectionTest.class,
     org.apache.sis.internal.shapefile.jdbc.DBFStatementTest.class,

@@ -17,8 +17,8 @@
 package org.apache.sis.test.suite;
 
 import org.apache.sis.test.TestSuite;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.BeforeClass;
-import org.junit.runners.Suite;
 
 
 /**
@@ -30,7 +30,7 @@ import org.junit.runners.Suite;
  * @since   0.5
  * @module
  */
-@Suite.SuiteClasses({
+@SelectClasses({
     org.apache.sis.feature.DefaultAttributeTypeTest.class,
     org.apache.sis.feature.CharacteristicTypeMapTest.class,
     org.apache.sis.feature.CharacteristicMapTest.class,

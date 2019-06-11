@@ -31,8 +31,9 @@ import org.apache.sis.util.logging.MonolineFormatter;
 import org.apache.sis.util.Classes;
 import org.junit.BeforeClass;
 import org.junit.AfterClass;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 import static org.junit.Assert.*;
 
@@ -45,7 +46,7 @@ import static org.junit.Assert.*;
  * @since   0.3
  * @module
  */
-@RunWith(Suite.class)
+@RunWith(JUnitPlatform.class)
 public abstract strictfp class TestSuite {
     /**
      * The default set of base classes that all test cases are expected to extends.
@@ -102,7 +103,7 @@ public abstract strictfp class TestSuite {
          * Now scan all "*Test.class" in the "target/org" directory and and sub-directories,
          * and fail on the first missing test file if any.
          */
-        List<Class<?>> declared = Arrays.asList(suite.getAnnotation(Suite.SuiteClasses.class).value());
+        List<Class<?>> declared = Arrays.asList(suite.getAnnotation(SelectClasses.class).value());
         final Set<Class<?>> tests = new HashSet<>(declared);
         if (tests.size() != declared.size()) {
             declared = new ArrayList<>(declared);
@@ -198,7 +199,7 @@ public abstract strictfp class TestSuite {
      * @param  baseTestClasses  the set of base classes that all test cases are expected to extends.
      */
     protected static void verifyTestList(final Class<? extends TestSuite> suite, final Class<?>[] baseTestClasses) {
-        final Class<?>[] testCases = suite.getAnnotation(Suite.SuiteClasses.class).value();
+        final Class<?>[] testCases = suite.getAnnotation(SelectClasses.class).value();
         final Set<Class<?>> done = new HashSet<>(testCases.length);
         for (final Class<?> testCase : testCases) {
             if (!Classes.isAssignableToAny(testCase, baseTestClasses)) {

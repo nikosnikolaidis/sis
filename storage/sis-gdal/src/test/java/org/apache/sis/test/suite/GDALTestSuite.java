@@ -18,7 +18,7 @@ package org.apache.sis.test.suite;
 
 import org.apache.sis.test.TestSuite;
 import org.junit.BeforeClass;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 
 /**
@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
  * @since   0.8
  * @module
  */
-@Suite.SuiteClasses({
+@SelectClasses({
     org.apache.sis.storage.gdal.PJTest.class,
     org.apache.sis.storage.gdal.Proj4Test.class,
     org.apache.sis.storage.gdal.Proj4ParserTest.class,
