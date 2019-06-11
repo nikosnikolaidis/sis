@@ -30,7 +30,7 @@ import org.junit.BeforeClass;
 public final strictfp class SQLTestSuite extends TestSuite {
     /**
      * Verifies the list of tests before to run the suite.
-     * See {@link #verifyTestList(Class, Class[])} for more information.
+     * See {@link TestSuite#verifyTestList(Class)} for more information.
      */
     @BeforeClass
     public static void verifyTestList() {

@@ -39,7 +39,7 @@ import org.junit.platform.suite.api.SelectClasses;
 public final strictfp class GDALTestSuite extends TestSuite {
     /**
      * Verifies the list of tests before to run the suite.
-     * See {@link #verifyTestList(Class, Class[])} for more information.
+     * See {@link TestSuite#verifyTestList(Class)} for more information.
      */
     @BeforeClass
     public static void verifyTestList() {
