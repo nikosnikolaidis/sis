@@ -23,6 +23,10 @@ import java.util.Locale;
 import java.util.Iterator;
 import java.util.Collections;
 import javax.measure.Unit;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -93,7 +97,7 @@ public final strictfp class EPSGFactoryTest extends TestCase {
      *
      * @throws FactoryException if an error occurred while creating the factory.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createFactory() throws FactoryException {
         TestFactorySource.createFactory();
     }
@@ -103,7 +107,7 @@ public final strictfp class EPSGFactoryTest extends TestCase {
      *
      * @throws FactoryException if an error occurred while closing the connections.
      */
-    @AfterClass
+    @AfterAll
     public static void close() throws FactoryException {
         TestFactorySource.close();
     }
@@ -118,7 +122,7 @@ public final strictfp class EPSGFactoryTest extends TestCase {
     /**
      * Verifies that no unexpected warning has been emitted in any test defined in this class.
      */
-    @After
+    @AfterEach
     public void assertNoUnexpectedLog() {
         loggings.assertNoUnexpectedLog();
     }

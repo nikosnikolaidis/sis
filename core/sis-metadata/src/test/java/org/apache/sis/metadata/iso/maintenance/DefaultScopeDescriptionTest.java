@@ -21,6 +21,7 @@ import org.apache.sis.test.LoggingWatcher;
 import org.apache.sis.test.TestCase;
 import org.junit.After;
 import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.sis.test.Assert.*;
@@ -45,7 +46,7 @@ public final strictfp class DefaultScopeDescriptionTest extends TestCase {
     /**
      * Verifies that no unexpected warning has been emitted in any test defined in this class.
      */
-    @After
+    @AfterEach
     public void assertNoUnexpectedLog() {
         loggings.assertNoUnexpectedLog();
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.sis.referencing.operation.transform;
 
+import org.junit.jupiter.api.AfterEach;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -220,7 +221,7 @@ public strictfp class ProjectiveTransformTest extends TransformTestCase {
      * In addition, all Apache SIS classes for linear transforms shall implement
      * {@link LinearTransform} and {@link Parameterized} interfaces.
      */
-    @After
+    @AfterEach
     public final void ensureImplementRightInterface() {
         if (transform instanceof TransformResultComparator) {
             transform = ((TransformResultComparator) transform).tested;

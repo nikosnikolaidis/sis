@@ -31,6 +31,8 @@ import org.apache.sis.internal.xml.XmlUtilities;
 import org.apache.sis.test.xml.TestCase;
 import org.junit.BeforeClass;
 import org.junit.AfterClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.sis.test.MetadataAssert.*;
@@ -69,7 +71,7 @@ public final strictfp class TimePeriodTest extends TestCase {
      *
      * @see #disposeMarshallerPool()
      */
-    @BeforeClass
+    @BeforeAll
     public static void createMarshallerPool() throws JAXBException {
         final Map<String,Object> properties = new HashMap<>(4);
         assertNull(properties.put(XML.LOCALE, Locale.FRANCE));
@@ -81,7 +83,7 @@ public final strictfp class TimePeriodTest extends TestCase {
      * Invoked by JUnit after the execution of every tests in order to dispose
      * the {@link MarshallerPool} instance used internally by this class.
      */
-    @AfterClass
+    @AfterAll
     public static void disposeMarshallerPool() {
         pool = null;
     }

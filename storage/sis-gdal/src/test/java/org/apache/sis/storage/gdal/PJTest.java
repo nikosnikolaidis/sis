@@ -45,7 +45,7 @@ public final strictfp class PJTest extends TestCase {
     /**
      * Verifies if the {@literal Proj.4} library is available.
      */
-    @BeforeClass
+    @BeforeAll
     public static synchronized void verifyNativeLibraryAvailability() {
         if (status == null) try {
             out.println("Proj.4 version: " + PJ.getRelease());

@@ -27,6 +27,7 @@ import org.apache.sis.test.mock.FeatureAttributeMock;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.XML;
 import org.junit.AfterClass;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
@@ -72,7 +73,7 @@ public final strictfp class MultiplicityTest extends TestUsingFile {
      * Invoked by JUnit after the execution of every tests in order to dispose
      * the {@link MarshallerPool} instance used internally by this class.
      */
-    @AfterClass
+    @AfterAll
     public static void disposeMarshallerPool() {
         pool = null;
     }

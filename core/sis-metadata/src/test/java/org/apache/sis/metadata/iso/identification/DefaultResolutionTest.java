@@ -17,6 +17,8 @@
 package org.apache.sis.metadata.iso.identification;
 
 import javax.xml.bind.JAXBException;
+
+import org.junit.jupiter.api.AfterEach;
 import org.opengis.metadata.identification.RepresentativeFraction;
 import org.apache.sis.xml.Namespaces;
 import org.apache.sis.internal.xml.LegacyNamespaces;
@@ -53,7 +55,7 @@ public final strictfp class DefaultResolutionTest extends TestCase {
     /**
      * Verifies that no unexpected warning has been emitted in any test defined in this class.
      */
-    @After
+    @AfterEach
     public void assertNoUnexpectedLog() {
         loggings.assertNoUnexpectedLog();
     }

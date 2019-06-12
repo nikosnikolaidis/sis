@@ -16,6 +16,8 @@
  */
 package org.apache.sis.io.wkt;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.factory.TestFactorySource;
@@ -44,7 +46,7 @@ public final strictfp class ComparisonWithEPSG extends TestCase {
      *
      * @throws FactoryException if an error occurred while creating the factory.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createFactory() throws FactoryException {
         TestFactorySource.createFactory();
     }
@@ -54,7 +56,7 @@ public final strictfp class ComparisonWithEPSG extends TestCase {
      *
      * @throws FactoryException if an error occurred while closing the connections.
      */
-    @AfterClass
+    @AfterAll
     public static void close() throws FactoryException {
         TestFactorySource.close();
     }

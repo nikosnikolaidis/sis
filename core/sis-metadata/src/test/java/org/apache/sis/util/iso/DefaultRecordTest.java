@@ -18,6 +18,9 @@ package org.apache.sis.util.iso;
 
 import java.util.Map;
 import java.util.LinkedHashMap;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opengis.util.MemberName;
 import org.opengis.util.RecordType;
 
@@ -50,7 +53,7 @@ public final strictfp class DefaultRecordTest extends TestCase {
     /**
      * Creates the {@link DefaultRecordType} to be used by all tests in this class.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createRecordType() {
         final DefaultRecordSchema schema = new SerializableRecordSchema("MySchema");
         final Map<CharSequence,Class<?>> members = new LinkedHashMap<>(8);
@@ -65,7 +68,7 @@ public final strictfp class DefaultRecordTest extends TestCase {
     /**
      * Clears the {@link DefaultRecordType} used by the tests.
      */
-    @AfterClass
+    @AfterAll
     public static void clearRecordType() {
         SerializableRecordSchema.INSTANCE = null;
         recordType = null;

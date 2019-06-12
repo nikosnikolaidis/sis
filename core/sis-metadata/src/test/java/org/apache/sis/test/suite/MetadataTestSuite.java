@@ -17,6 +17,7 @@
 package org.apache.sis.test.suite;
 
 import org.apache.sis.test.TestSuite;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.BeforeClass;
 
@@ -140,7 +141,7 @@ public final strictfp class MetadataTestSuite extends TestSuite {
      * Verifies the list of tests before to run the suite.
      * See {@link TestSuite#verifyTestList(Class)} for more information.
      */
-    @BeforeClass
+    @BeforeAll
     public static void verifyTestList() {
         assertNoMissingTest(MetadataTestSuite.class);
         verifyTestList(MetadataTestSuite.class);

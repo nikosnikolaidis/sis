@@ -16,6 +16,8 @@
  */
 package org.apache.sis.util.iso;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opengis.util.GenericName;
 import org.opengis.test.util.NameTest;
 import org.apache.sis.test.DependsOn;
@@ -55,7 +57,7 @@ public final strictfp class DefaultNameFactoryTest extends NameTest {
     /**
      * Creates the singleton factory instance to be reused for all tests in this class.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createFactory() {
         factorySIS = new DefaultNameFactory();
     }
@@ -63,7 +65,7 @@ public final strictfp class DefaultNameFactoryTest extends NameTest {
     /**
      * Disposes the singleton factory instance after all tests have been executed.
      */
-    @AfterClass
+    @AfterAll
     public static void disposeFactory() {
         factorySIS = null;
     }

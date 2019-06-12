@@ -36,7 +36,7 @@ public final strictfp class ShapefileTestSuite extends TestSuite {
      * Verifies the list of tests before to run the suite.
      * See {@link TestSuite#verifyTestList(Class)} for more information.
      */
-    @BeforeClass
+    @BeforeAll
     public static void verifyTestList() {
         assertNoMissingTest(ShapefileTestSuite.class);
         verifyTestList(ShapefileTestSuite.class);

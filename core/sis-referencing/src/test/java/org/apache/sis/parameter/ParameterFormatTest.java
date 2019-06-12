@@ -18,6 +18,9 @@ package org.apache.sis.parameter;
 
 import java.util.List;
 import java.util.Locale;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -60,7 +63,7 @@ public final strictfp class ParameterFormatTest extends TestCase {
      * <div class="note"><b>Note:</b>
      * the default values are not part of EPSG definitions. They are added here only for testing purpose.</div>
      */
-    @BeforeClass
+    @BeforeAll
     public static void createParameterDescriptor() {
         descriptor = createMercatorParameters();
     }
@@ -93,7 +96,7 @@ public final strictfp class ParameterFormatTest extends TestCase {
     /**
      * Forgets the parameter descriptors after all tests are done.
      */
-    @AfterClass
+    @AfterAll
     public static void clearParameterDescriptor() {
         descriptor = null;
     }

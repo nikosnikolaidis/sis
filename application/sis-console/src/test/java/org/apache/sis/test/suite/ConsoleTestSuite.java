@@ -43,7 +43,7 @@ public final strictfp class ConsoleTestSuite extends TestSuite {
      * Verifies the list of tests before to run the suite.
      * See {@link TestSuite#verifyTestList(Class)} for more information.
      */
-    @BeforeClass
+    @BeforeAll
     public static void verifyTestList() {
         assertNoMissingTest(ConsoleTestSuite.class);
         verifyTestList(ConsoleTestSuite.class);

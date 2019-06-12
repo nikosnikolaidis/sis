@@ -39,6 +39,7 @@ import org.apache.sis.xml.Namespaces;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.XML;
 import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 
 import static org.apache.sis.test.MetadataAssert.*;
 
@@ -166,7 +167,7 @@ public abstract strictfp class TestCase extends org.apache.sis.test.TestCase {
      * This method is automatically invoked by JUnit after each test, but can also be invoked explicitly before
      * to create a new context. It is safe to invoke this method more than once.
      */
-    @After
+    @AfterEach
     public final void clearContext() {
         assertSame("Unexpected context. Is this method invoked from the right thread?", context, Context.current());
         if (context != null) {

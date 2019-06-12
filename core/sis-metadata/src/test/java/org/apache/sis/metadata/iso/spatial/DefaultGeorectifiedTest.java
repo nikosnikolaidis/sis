@@ -16,6 +16,7 @@
  */
 package org.apache.sis.metadata.iso.spatial;
 
+import org.junit.jupiter.api.AfterEach;
 import org.opengis.util.InternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.internal.jaxb.Context;
@@ -47,7 +48,7 @@ public final strictfp class DefaultGeorectifiedTest extends TestCase {
     /**
      * Verifies that no unexpected warning has been emitted in any test defined in this class.
      */
-    @After
+    @AfterEach
     public void assertNoUnexpectedLog() {
         loggings.assertNoUnexpectedLog();
     }

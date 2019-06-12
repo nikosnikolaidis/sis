@@ -51,7 +51,7 @@ public final strictfp class Proj4FactoryTest extends TestCase {
     /**
      * Verifies if the {@literal Proj.4} library is available.
      */
-    @BeforeClass
+    @BeforeAll
     public static void verifyNativeLibraryAvailability() {
         PJTest.verifyNativeLibraryAvailability();
     }

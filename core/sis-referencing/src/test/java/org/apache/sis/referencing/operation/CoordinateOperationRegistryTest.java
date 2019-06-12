@@ -18,6 +18,9 @@ package org.apache.sis.referencing.operation;
 
 import java.util.List;
 import java.text.ParseException;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
@@ -124,7 +127,7 @@ public final strictfp class CoordinateOperationRegistryTest extends MathTransfor
      *
      * @throws ParseException if an error occurred while preparing the WKT parser.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createFactory() throws ParseException {
         factory = new DefaultCoordinateOperationFactory();
         parser  = new WKTFormat(null, null);
@@ -136,7 +139,7 @@ public final strictfp class CoordinateOperationRegistryTest extends MathTransfor
     /**
      * Disposes the factory created by {@link #createFactory()} after all tests have been executed.
      */
-    @AfterClass
+    @AfterAll
     public static void disposeFactory() {
         factory = null;
         parser  = null;

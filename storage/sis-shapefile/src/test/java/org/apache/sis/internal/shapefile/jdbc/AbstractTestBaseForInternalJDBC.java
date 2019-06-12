@@ -58,7 +58,7 @@ public abstract class AbstractTestBaseForInternalJDBC extends TestCase {
      * Test setup.
      * @throws URISyntaxException If an error occurred while getting the file to the test database.
      */
-    @Before
+    @BeforeEach
     public void setup() throws URISyntaxException {
         final URL url = ShapeFileTest.class.getResource("SignedBikeRoute_4326_clipped.dbf");
         assertNotNull("The database file used for testing doesn't exist.", url);

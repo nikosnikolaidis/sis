@@ -17,6 +17,8 @@
 package org.apache.sis.referencing.crs;
 
 import javax.xml.bind.JAXBException;
+
+import org.junit.jupiter.api.AfterEach;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -76,7 +78,7 @@ public final strictfp class DefaultProjectedCRSTest extends TestCase {
     /**
      * Verifies that no unexpected warning has been emitted in any test defined in this class.
      */
-    @After
+    @AfterEach
     public void assertNoUnexpectedLog() {
         loggings.assertNoUnexpectedLog();
     }

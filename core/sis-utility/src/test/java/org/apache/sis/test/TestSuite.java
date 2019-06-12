@@ -31,6 +31,8 @@ import org.apache.sis.util.logging.MonolineFormatter;
 import org.apache.sis.util.Classes;
 import org.junit.BeforeClass;
 import org.junit.AfterClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
@@ -227,7 +229,7 @@ public abstract strictfp class TestSuite {
      *
      * @since 1.0
      */
-    @BeforeClass
+    @BeforeAll
     public static void configureLogging() {
         MonolineFormatter f = MonolineFormatter.install();
         f.setHeader(null);
@@ -246,7 +248,7 @@ public abstract strictfp class TestSuite {
      *
      * @throws Exception if an error occurred during unregistration of the supervisor MBean or resource disposal.
      */
-    @AfterClass
+    @AfterAll
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void shutdown() throws Exception {
         if (!skipShutdown) {

@@ -151,7 +151,7 @@ public abstract strictfp class TestCase extends org.apache.sis.test.TestCase {
      *
      * @throws IOException if an error occurred while closing a file.
      */
-    @AfterClass
+    @AfterAll
     public static void closeAllDecoders() throws IOException {
         Throwable failure = null;
         synchronized (DECODERS) {               // Paranoiac safety.

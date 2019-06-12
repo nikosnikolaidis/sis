@@ -19,6 +19,7 @@ package org.apache.sis.io;
 import java.io.IOException;
 import org.apache.sis.test.DependsOn;
 import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.Assert.*;
 
@@ -39,7 +40,7 @@ public final strictfp class TabulationExpansionTest extends LineAppenderTest {
     /**
      * Creates and configure the {@link LineAppender} to test.
      */
-    @Before
+    @BeforeEach
     @Override
     public void createLineAppender() {
         appender = new LineAppender(appender, null, true);

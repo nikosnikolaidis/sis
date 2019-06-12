@@ -18,6 +18,8 @@ package org.apache.sis.parameter;
 
 import java.util.Map;
 import java.util.Random;
+
+import org.junit.jupiter.api.AfterAll;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.referencing.operation.Matrix;
@@ -128,7 +130,7 @@ public strictfp class TensorParametersTest extends TestCase {
      * Discards the parameters used by the tests in this class.
      * This method is invoked by JUnit only after all tests completed.
      */
-    @AfterClass
+    @AfterAll
     public static void clearTensorParameters() {
         WKT1 = null;
     }

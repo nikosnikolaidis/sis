@@ -163,7 +163,7 @@ public abstract strictfp class ImageTestCase extends TestCase {
      * If a frame has been created by {@link #showCurrentImage(String)},
      * waits for its disposal before to move to the next test class.
      */
-    @AfterClass
+    @AfterAll
     public static void waitForFrameDisposal() {
         if (viewUsed) {
             TestViewer.waitForFrameDisposal();

@@ -22,6 +22,8 @@ import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
+
+import org.junit.jupiter.api.AfterEach;
 import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.util.InternationalString;
 import org.apache.sis.test.DependsOnMethod;
@@ -212,7 +214,7 @@ public final strictfp class IndexedResourceBundleTest extends TestCase {
      *
      * @throws IOException should never happen since this test writes only in memory.
      */
-    @After
+    @AfterEach
     public void dumpResourcesOnError() throws IOException {
         if (testing != null) {
             out.print("Error while testing ");

@@ -16,6 +16,8 @@
  */
 package org.apache.sis.referencing.operation.transform;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.SphericalCS;
@@ -64,7 +66,7 @@ public final strictfp class CoordinateSystemTransformTest extends TransformTestC
      * Creates the {@link MathTransformFactory} to be used for the tests.
      * We do not use the system-wide factory in order to have better tests isolation.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createFactory() {
         factory = new DefaultMathTransformFactory();
         spherical = (SphericalCS) DefaultGeocentricCRS.castOrCopy(CommonCRS.WGS84.spherical())
@@ -74,7 +76,7 @@ public final strictfp class CoordinateSystemTransformTest extends TransformTestC
     /**
      * Disposes the {@link MathTransformFactory} used for the tests.
      */
-    @AfterClass
+    @AfterAll
     public static void disposeFactory() {
         spherical = null;
         factory = null;

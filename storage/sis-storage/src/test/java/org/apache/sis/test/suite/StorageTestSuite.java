@@ -60,7 +60,7 @@ public final strictfp class StorageTestSuite extends TestSuite {
      * Verifies the list of tests before to run the suite.
      * See {@link TestSuite#verifyTestList(Class)} for more information.
      */
-    @BeforeClass
+    @BeforeAll
     public static void verifyTestList() {
         assertNoMissingTest(StorageTestSuite.class);
         verifyTestList(StorageTestSuite.class);

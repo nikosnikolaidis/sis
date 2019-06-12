@@ -65,7 +65,7 @@ public final strictfp class ReaderTest extends TestCase {
     /**
      * Creates the provider to be shared by all data stores created in this test class.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createProvider() {
         provider = new StoreProvider();
     }
@@ -73,7 +73,7 @@ public final strictfp class ReaderTest extends TestCase {
     /**
      * Disposes the data store provider after all tests have been completed.
      */
-    @AfterClass
+    @AfterAll
     public static void disposeProvider() {
         provider = null;
     }

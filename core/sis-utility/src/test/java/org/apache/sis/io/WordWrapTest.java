@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.apache.sis.test.DependsOn;
 import org.apache.sis.internal.util.X364;
 import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.Assert.*;
 import static org.apache.sis.util.Characters.SOFT_HYPHEN;
@@ -41,7 +42,7 @@ public strictfp class WordWrapTest extends LineAppenderTest {
     /**
      * Creates and configure the {@link LineAppender} to test.
      */
-    @Before
+    @BeforeEach
     @Override
     public void createLineAppender() {
         appender = new LineAppender(appender, 10, false);

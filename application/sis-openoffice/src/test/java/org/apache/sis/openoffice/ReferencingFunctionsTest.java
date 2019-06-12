@@ -47,7 +47,7 @@ public final strictfp class ReferencingFunctionsTest extends TestCase {
     /**
      * Creates a {@link ReferencingFunctions} instance to use for all tests.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createReferencingInstance() {
         instance = new ReferencingFunctions(null);
         instance.setLocale(new com.sun.star.lang.Locale("en", "US", null));
@@ -56,7 +56,7 @@ public final strictfp class ReferencingFunctionsTest extends TestCase {
     /**
      * Disposes the {@link ReferencingFunctions} instance after all tests completed.
      */
-    @AfterClass
+    @AfterAll
     public static void disposeReferencingInstance() {
         instance = null;
     }

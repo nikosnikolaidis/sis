@@ -362,7 +362,7 @@ public strictfp class DefaultIteratorTest extends TestCase {
     /**
      * Invoked after every tests for releasing resources.
      */
-    @After
+    @AfterEach
     public void dispose() {
         iterator.close();
     }

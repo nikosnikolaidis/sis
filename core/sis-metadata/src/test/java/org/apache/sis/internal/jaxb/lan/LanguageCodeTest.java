@@ -23,6 +23,9 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opengis.metadata.Metadata;
 import org.apache.sis.xml.XML;
 import org.apache.sis.xml.MarshallerPool;
@@ -86,7 +89,7 @@ public final strictfp class LanguageCodeTest extends TestCase {
      *
      * @see #disposeMarshallerPool()
      */
-    @BeforeClass
+    @BeforeAll
     public static void createMarshallerPool() throws JAXBException {
         final Map<String,Object> properties = new HashMap<>(4);
         assertNull(properties.put(XML.LOCALE, Locale.UK));
@@ -99,7 +102,7 @@ public final strictfp class LanguageCodeTest extends TestCase {
      * Invoked by JUnit after the execution of every tests in order to dispose
      * the {@link MarshallerPool} instance used internally by this class.
      */
-    @AfterClass
+    @AfterAll
     public static void disposeMarshallerPool() {
         pool = null;
     }

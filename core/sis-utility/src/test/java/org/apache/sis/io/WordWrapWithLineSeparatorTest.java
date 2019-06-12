@@ -18,6 +18,7 @@ package org.apache.sis.io;
 
 import org.junit.Before;
 import org.apache.sis.test.DependsOn;
+import org.junit.jupiter.api.BeforeEach;
 
 
 /**
@@ -36,7 +37,7 @@ public final strictfp class WordWrapWithLineSeparatorTest extends WordWrapTest {
     /**
      * Creates and configure the {@link LineAppender} to test.
      */
-    @Before
+    @BeforeEach
     @Override
     public void createLineAppender() {
         appender = new LineAppender(new LineAppender(appender, "\r", false), 10, false);

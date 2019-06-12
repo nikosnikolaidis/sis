@@ -28,6 +28,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBException;
 
+import org.junit.jupiter.api.AfterEach;
 import org.opengis.metadata.*;
 import org.opengis.metadata.citation.*;
 import org.opengis.metadata.constraint.*;
@@ -114,7 +115,7 @@ public final strictfp class MetadataTest extends TestCase {
     /**
      * Verifies that no unexpected warning has been emitted in any test defined in this class.
      */
-    @After
+    @AfterEach
     public void assertNoUnexpectedLog() {
         loggings.skipNextLogIfContains("sis-temporal");
         loggings.assertNoUnexpectedLog();
