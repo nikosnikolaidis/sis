@@ -533,13 +533,13 @@
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
-        <version>${junit-jupiter-api.version}</version>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-engine</artifactId>
-        <version>${junit-jupiter-engine.version}</version>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -551,14 +551,9 @@
       <dependency>
         <groupId>org.junit.vintage</groupId>
         <artifactId>junit-vintage-engine</artifactId>
-        <version>${junit.vintage.version}</version>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
-        <dependency>
-          <groupId>org.junit.platform</groupId>
-          <artifactId>junit-platform-surefire-provider</artifactId>
-          <version>${junit.platform.version}</version>
-        </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -603,6 +598,8 @@
        =================================================================== -->
   <properties>
     <netcdf.version>4.6.14</netcdf.version>
+    <junit.version>5.5.2</junit.version>
+    <junit.platform.version>1.5.2</junit.platform.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <website.locale>en</website.locale>
@@ -614,10 +611,6 @@
     <sis.non-free.version>1.0</sis.non-free.version>                 <!-- Used only if "non-free" profile is enabled. -->
     <geoapi.version>3.0.1</geoapi.version>
     <jaxb.version>2.3.2</jaxb.version>
-    <junit-jupiter-api.version>${junit-jupiter-engine.version}</junit-jupiter-api.version>
-    <junit-jupiter-engine.version>5.4.2</junit-jupiter-engine.version>
-    <junit.vintage.version>5.4.2</junit.vintage.version>
-    <junit.platform.version>1.1.1</junit.platform.version>
   </properties>
 
   <profiles>
