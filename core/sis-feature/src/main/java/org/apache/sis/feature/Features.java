@@ -16,32 +16,42 @@
  */
 package org.apache.sis.feature;
 
+import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.IdentityHashMap;
-import org.opengis.util.GenericName;
-import org.opengis.util.NameFactory;
-import org.opengis.util.InternationalString;
+import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
+import org.opengis.feature.InvalidPropertyValueException;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.quality.Result;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
+import org.opengis.util.InternationalString;
+import org.opengis.util.NameFactory;
+
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.feature.Resources;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.iso.DefaultNameFactory;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.internal.feature.Resources;
+import org.apache.sis.util.logging.Logging;
 
 // Branch-dependent imports
-import org.opengis.feature.Attribute;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.FeatureAssociationRole;
-import org.opengis.feature.IdentifiedType;
-import org.opengis.feature.InvalidPropertyValueException;
-import org.opengis.feature.Operation;
-import org.opengis.feature.PropertyType;
 
 
 /**
@@ -55,6 +65,13 @@ import org.opengis.feature.PropertyType;
  * @module
  */
 public final class Features extends Static {
+
+    /**
+     * A test to know if a given property is an SIS convention or not. Return true if
+     * the property is NOT marked as an SIS convention, false otherwise.
+     */
+    private static final Predicate<IdentifiedType> IS_NOT_CONVENTION = p -> !AttributeConvention.contains(p.getName());
+
     /**
      * Do not allow instantiation of this class.
      */
@@ -305,5 +322,149 @@ public final class Features extends Static {
                 }
             }
         }
+    }
+
+
+    /**
+     * Search for the main geometric property in the given type. We'll search
+     * for an SIS convention first (see
+     * {@link AttributeConvention#GEOMETRY_PROPERTY}. If no convention is set on
+     * the input type, we'll check if it contains a single geometric property.
+     * If it's the case, we return it. Otherwise (no or multiple geometries), we
+     * throw an exception.
+     *
+     * @param type The data type to search into.
+     * @return The main geometric property we've found. It will never be null. If no geometric property is found, an
+     * exception is thrown.
+     * @throws PropertyNotFoundException If no geometric property is available
+     * in the given type.
+     * @throws IllegalStateException If no convention is set (see
+     * {@link AttributeConvention#GEOMETRY_PROPERTY}), and we've found more than
+     * one geometry.
+     */
+    public static PropertyType getDefaultGeometry(final FeatureType type) throws PropertyNotFoundException, IllegalStateException {
+        PropertyType geometry;
+        try {
+            geometry = type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        } catch (PropertyNotFoundException e) {
+            try {
+                geometry = searchForGeometry(type);
+            } catch (RuntimeException e2) {
+                e2.addSuppressed(e);
+                throw e2;
+            }
+        }
+
+        return geometry;
+    }
+
+    /**
+     * Search for a geometric attribute outside SIS conventions. More accurately,
+     * we expect the given type to have a single geometry attribute. If many are
+     * found, an exception is thrown.
+     *
+     * @param type The data type to search into.
+     * @return The only geometric property we've found.
+     * @throws PropertyNotFoundException If no geometric property is available in
+     * the given type.
+     * @throws IllegalStateException If we've found more than one geometry.
+     */
+    private static PropertyType searchForGeometry(final FeatureType type) throws PropertyNotFoundException, IllegalStateException {
+        final List<? extends PropertyType> geometries = type.getProperties(true).stream()
+                .filter(IS_NOT_CONVENTION)
+                .filter(AttributeConvention::isGeometryAttribute)
+                .collect(Collectors.toList());
+
+        if (geometries.size() < 1) {
+            throw new PropertyNotFoundException("No geometric property can be found outside of sis convention.");
+        } else if (geometries.size() > 1) {
+            throw new IllegalStateException("Multiple geometries found. We don't know which one to select.");
+        } else {
+            return geometries.get(0);
+        }
+    }
+
+    /**
+     * Test if given property type is an attribute as defined by {@link AttributeType}, or if it produces one as an
+     * {@link Operation#getResult() operation result}. It it is, we return the found attribute.
+     *
+     * @param input the data type to unravel the attribute from.
+     * @return The found attribute or an empty shell if we cannot find any.
+     */
+    public static Optional<AttributeType<?>> castOrUnwrap(IdentifiedType input) {
+        // In case an operation also implements attribute type, we check it first.
+        // TODO : cycle detection ?
+        while (!(input instanceof AttributeType) && input instanceof Operation) {
+            input = ((Operation) input).getResult();
+        }
+
+        if (input instanceof AttributeType) {
+            return Optional.of((AttributeType) input);
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Search for a specific characteristic in given property. Note that if the property is not an attribute, we'll try
+     * to get one for the search (see {@link #castOrUnwrap(IdentifiedType)} for more details).
+     *
+     * @param type The property to search into.
+     * @param characteristicName The name of the searched characteristic.
+     * @return Found characteristic, or nothing if we cannot find any matching given name.
+     */
+    public static Optional<AttributeType> getCharacteristic(PropertyType type, String characteristicName) {
+        return castOrUnwrap(type)
+                .map(attr -> attr.characteristics().get(characteristicName));
+    }
+
+    /**
+     * Search for a characteristic value in a given property. For more complete information, you can get the complete
+     * characteristic definition through {@link #getCharacteristic(PropertyType, String)}.
+     *
+     * @param type The property to search into
+     * @param characteristicName Name of the characteristic to get a value for.
+     * @param <T> Expected type for characteristics values. Be careful, if using a wrong type, an error could occur on
+     *           execution.
+     * @return The default value of the characteristic if we've found it, or an empty shell if the characteristic does
+     * not exists or has no default value.
+     * @throws ClassCastException If a value is found, but does not match specified data type.
+     */
+    public static <T> Optional<T> getCharacteristicValue(PropertyType type, String characteristicName) {
+        return getCharacteristic(type, characteristicName)
+                .map(characteristic -> (T) characteristic.getDefaultValue());
+    }
+
+    /**
+     * Extract the coordinate reference system associated to the primary geometry of input data type.
+     *
+     * @implNote
+     * Primary geometry is determined using {@link #getDefaultGeometry(org.opengis.feature.FeatureType) }.
+     *
+     * @param type The data type to extract reference system from.
+     * @return The CRS associated to the default geometry of this data type, or
+     * an empty value if we cannot determine what is the primary geometry of the
+     * data type. Note that an empty value is also returned if a geometry property
+     * is found, but no CRS characteristics is associated with it.
+     */
+    public static Optional<CoordinateReferenceSystem> getDefaultCrs(FeatureType type) {
+        try {
+            return getDefaultCrs(getDefaultGeometry(type));
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            Logging.getLogger("org.apache.sis.feature").log(Level.FINE, "Cannot extract CRS from type, cause no default geometry is available", ex);
+            //no default geometry property
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Extract CRS characteristic if it exists.
+     *
+     * @param type The property that we want information for.
+     * @return If any Coordinate reference system characteristic (as defined by {@link AttributeConvention#CRS_CHARACTERISTIC SIS convention})
+     * is available, its default value is returned. Otherwise, nothing.
+     */
+    public static Optional<CoordinateReferenceSystem> getDefaultCrs(PropertyType type) {
+        return getCharacteristicValue(type, AttributeConvention.CRS_CHARACTERISTIC.toString());
     }
 }

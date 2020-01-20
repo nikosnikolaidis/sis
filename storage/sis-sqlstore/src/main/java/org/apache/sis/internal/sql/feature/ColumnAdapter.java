@@ -18,8 +18,10 @@ package org.apache.sis.internal.sql.feature;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -53,6 +55,18 @@ public interface ColumnAdapter<T> {
     default Optional<CoordinateReferenceSystem> getCrs() {
         return Optional.empty();
     }
+
+    /**
+     * If possible, return a fast estimation of the dataset envelope based on this column geometry.
+     *
+     * @implNote Note that no cache system should be implemented here, as we query a valid connection for direct
+     * computation. However, containers are free to cache returned information at their convenience.
+     *
+     * @param target The database connection to use to compute the envelope.
+     * @return If available, the envelope of the current column. Otherwise, an empty shell.
+     * @throws SQLException If we fail fetching information from database.
+     */
+    default Optional<Envelope> getEnvelope(final Connection target) throws SQLException { return Optional.empty(); }
 
     /**
      *

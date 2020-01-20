@@ -34,7 +34,9 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
+import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 
 import org.apache.sis.internal.metadata.sql.Reflection;
@@ -196,12 +198,34 @@ final class Table extends AbstractFeatureSet {
         this.importedKeys     = toArray(specification.getImports());
         this.exportedKeys     = toArray(specification.getExports());
         this.primaryKeyClass  = primaryKeys.length < 2 ? Object.class : Object[].class;
-        this.hasGeometry      = specification.getPrimaryGeometryColumn().isPresent();
+        boolean geometryFound;
+        try {
+            org.apache.sis.feature.Features.getDefaultGeometry(featureType);
+            geometryFound = true;
+        } catch (PropertyNotFoundException e) {
+            geometryFound= false;
+        } catch (IllegalStateException e) {
+            geometryFound = true;
+        }
+        this.hasGeometry      = geometryFound;
         this.attributes       = Collections.unmodifiableList(
                 specification.getColumns().stream()
                         .map(column -> column.naming)
                         .collect(Collectors.toList())
         );
+    }
+
+
+    @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        if (hasGeometry) {
+            try (Connection target = Database.connectReadOnly(source)) {
+                return adapter.getEnvelope(target);
+            } catch (SQLException e) {
+                throw new DataStoreException("Database interrogation for an envelope failed", e);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override

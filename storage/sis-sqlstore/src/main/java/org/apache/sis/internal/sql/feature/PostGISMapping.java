@@ -17,6 +17,7 @@
 package org.apache.sis.internal.sql.feature;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,10 +26,15 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.feature.Geometries;
 import org.apache.sis.internal.metadata.sql.Dialect;
+import org.apache.sis.internal.metadata.sql.SQLBuilder;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.setup.GeometryLibrary;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
@@ -109,11 +115,11 @@ public final class PostGISMapping implements DialectMapping {
         final Class geomClass = getGeometricClass(geometryType, library);
 
         if (geomDef == null || geomDef.crs == null) {
-            return new HexEWKBDynamicCrs(geomClass);
+            return new HexEWKBDynamicCrs(geomClass, definition);
         } else {
             // TODO: activate optimisation : WKB is lighter, but we need to modify user query, and to know CRS in advance.
             //geometryDecoder = new WKBReader(geomDef.crs);
-            return new HexEWKBFixedCrs(geomClass, geomDef.crs);
+            return new HexEWKBFixedCrs(geomClass, definition, geomDef.crs);
         }
     }
 
@@ -154,12 +160,41 @@ public final class PostGISMapping implements DialectMapping {
         }
     }
 
-    private final class HexEWKBFixedCrs extends Reader {
+    private abstract class PostGisReader extends Reader {
+
+        final SQLColumn columnDefinition;
         final CoordinateReferenceSystem crsToApply;
 
-        public HexEWKBFixedCrs(Class geomClass, CoordinateReferenceSystem crsToApply) {
+        public PostGisReader(Class geomClass, final SQLColumn colDef, CoordinateReferenceSystem crsToApply) {
             super(geomClass);
+            this.columnDefinition = colDef;
             this.crsToApply = crsToApply;
+        }
+
+        /**
+         * @implNote Use PostGIS <a href="https://postgis.net/docs/ST_EstimatedExtent.html">ST_EstimatedExtent</a>
+         * function to get a rough estimation of column extent. If it returns no result, we fallback on
+         * <a href="https://postgis.net/docs/ST_Extent.html">ST_Extent</a> to get information.
+         * @return Envelope of the column if available, else nothing.
+         */
+        @Override
+        public Optional<Envelope> getEnvelope(final Connection target) throws SQLException {
+            if (columnDefinition.origin != null) {
+                EnvelopeEstimator estimator = new EnvelopeEstimator(target, columnDefinition.naming, columnDefinition.origin, crsToApply);
+
+                Optional<Envelope> env = estimator.execute(true);
+                if (!env.isPresent()) env = estimator.execute(false);
+
+                return env;
+            }
+            return Optional.empty();
+        }
+    }
+
+    private final class HexEWKBFixedCrs extends PostGisReader {
+
+        public HexEWKBFixedCrs(Class geomClass, final SQLColumn colDef, CoordinateReferenceSystem crsToApply) {
+            super(geomClass, colDef, crsToApply);
         }
 
         @Override
@@ -173,10 +208,10 @@ public final class PostGISMapping implements DialectMapping {
         }
     }
 
-    private final class HexEWKBDynamicCrs extends Reader {
+    private final class HexEWKBDynamicCrs extends PostGisReader {
 
-        public HexEWKBDynamicCrs(Class geomClass) {
-            super(geomClass);
+        public HexEWKBDynamicCrs(Class geomClass, final SQLColumn colDef) {
+            super(geomClass, colDef, null);
         }
 
         @Override
@@ -208,6 +243,54 @@ public final class PostGISMapping implements DialectMapping {
         public Object apply(ResultSet resultSet, Integer integer) throws SQLException {
             final String hexa = resultSet.getString(integer);
             return hexa == null ? null : reader.readHexa(hexa);
+        }
+    }
+
+    private static final class EnvelopeEstimator {
+        final SQLBuilder builder;
+        final Connection target;
+        private final ColumnRef colRef;
+        private final TableReference table;
+        final CoordinateReferenceSystem crs;
+
+        private EnvelopeEstimator(final Connection target, final ColumnRef colRef, final TableReference table, final CoordinateReferenceSystem optCrs) throws SQLException {
+            builder = new SQLBuilder(target.getMetaData(), false);
+            this.target = target;
+            this.colRef = colRef;
+            this.table = table;
+
+            if (optCrs != null) {
+                crs = CRS.getHorizontalComponent(optCrs);
+            } else crs = null;
+        }
+
+        private Optional<Envelope> execute(boolean fast) throws SQLException {
+            builder.clear();
+            builder
+                    .append("SELECT st_xmin(box) as minx, st_ymin(box) as miny, st_xmax(box) as maxx, st_ymax(box) as maxy")
+                    .append(" FROM (")
+                        .append("SELECT "+(fast ? "ST_EstimatedExtent" : "ST_Extent")+"(")
+                        .appendIdentifier(colRef.getColumnName())
+                        .append(") as box FROM ")
+                        .appendIdentifier(table.schema, table.table)
+                    .append(") as sub")
+                    .toString();
+
+            try (
+                    PreparedStatement query = target.prepareStatement("TODO");
+                    ResultSet dbResult = query.executeQuery()
+            ) {
+                if (dbResult.next()) {
+                    final Envelope2D env = new Envelope2D(
+                            new DirectPosition2D(dbResult.getDouble(1), dbResult.getDouble(2)),
+                            new DirectPosition2D(dbResult.getDouble(3), dbResult.getDouble(4))
+                    );
+                    if (crs != null) env.setCoordinateReferenceSystem(crs);
+                    return Optional.of(env);
+                }
+            }
+
+            return Optional.empty();
         }
     }
 }

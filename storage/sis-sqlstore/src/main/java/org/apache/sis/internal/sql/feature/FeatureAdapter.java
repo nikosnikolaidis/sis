@@ -22,10 +22,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.geometry.Envelope;
+
+import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.util.collection.BackingStoreException;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -73,6 +79,30 @@ class FeatureAdapter {
                 .map(mapper -> mapper.prepare(target))
                 .collect(Collectors.toList());
         return new ResultSetAdapter(rtu);
+    }
+
+
+    public Optional<Envelope> getEnvelope(final Connection target) throws SQLException {
+        // TODO: Allow user to specify a specific column
+        try {
+            return attributeMappers.stream()
+                    .map(mapper -> mapper.fetchValue)
+                    .filter(column -> Geometries.isKnownType(column.getJavaType()))
+                    .map(column -> getEnvelope(target, column))
+                    .filter(Objects::nonNull)
+                    // TODO: that's not accurate, but has the benefit to avoid heavy-weight trasforms in a common-space.
+                    .findAny();
+        } catch (BackingStoreException e) {
+            throw e.unwrapOrRethrow(SQLException.class);
+        }
+    }
+
+    private Envelope getEnvelope(Connection target, ColumnAdapter<?> column) {
+        try {
+            return column.getEnvelope(target).orElse(null);
+        } catch (SQLException e) {
+            throw new BackingStoreException(e);
+        }
     }
 
     /**
@@ -146,7 +176,7 @@ class FeatureAdapter {
         // nature, and an indexed implementation could (to verify, still) be bad on memory footprint.
         final String propertyName;
         final int columnIndex;
-        final ColumnAdapter fetchValue;
+        final ColumnAdapter<?> fetchValue;
 
         PropertyMapper(String propertyName, int columnIndex, ColumnAdapter fetchValue) {
             this.propertyName = propertyName;
