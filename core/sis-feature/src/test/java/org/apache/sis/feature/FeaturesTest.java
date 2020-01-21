@@ -16,16 +16,36 @@
  */
 package org.apache.sis.feature;
 
-import org.apache.sis.test.DependsOn;
-import org.apache.sis.test.TestCase;
-import org.junit.Test;
+import java.util.Collections;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
-
-// Branch-dependent imports
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.InvalidPropertyValueException;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
+import org.opengis.metadata.acquisition.GeometryType;
 
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.test.DependsOn;
+import org.apache.sis.test.TestCase;
+
+import org.junit.Test;
+
+import static org.apache.sis.feature.CharacteristicTypeMapTest.temperature;
+import static org.apache.sis.feature.DefaultAttributeTypeTest.city;
+import static org.apache.sis.feature.DefaultAttributeTypeTest.parliament;
+import static org.apache.sis.feature.DefaultFeatureTypeTest.capital;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+// Branch-dependent imports
 
 /**
  * Tests {@link Features}.
@@ -43,7 +63,7 @@ public final strictfp class FeaturesTest extends TestCase {
      */
     @Test
     public void testCastAttributeType() {
-        final DefaultAttributeType<String> parliament = DefaultAttributeTypeTest.parliament();
+        final DefaultAttributeType<String> parliament = parliament();
         assertSame(parliament, Features.cast(parliament, String.class));
         try {
             Features.cast(parliament, CharSequence.class);
@@ -94,5 +114,78 @@ public final strictfp class FeaturesTest extends TestCase {
         feature.setPropertyValue("city", "Utopia");
         feature.setPropertyValue("population", 10);
         Features.validate(feature);
+    }
+
+    @Test
+    public void unwrapAttribute() {
+        final Operation link = new LinkOperation(Collections.singletonMap("name", "link"), city());
+        AttributeType<?> attr = Features.castOrUnwrap(link)
+                .orElseThrow(() -> new AssertionError("Attribute result of link operation has not been found"));
+        assertEquals("Found attribute should the link target", city(), attr);
+
+        final LinkOperation overLink = new LinkOperation(Collections.singletonMap("name", "linkOfLink"), link);
+        attr = Features.castOrUnwrap(overLink)
+                .orElseThrow(() -> new AssertionError("Attribute result of link operation has not been found"));
+
+        assertEquals("Found attribute should the link target", city(), attr);
+
+        attr = Features.castOrUnwrap(city())
+                .orElseThrow(() -> new AssertionError("Given attribute should be returned directly"));
+        assertEquals("Attribute should be returned directly", attr, city());
+    }
+
+    @Test
+    public void getCharacteristicAndItsValue() {
+        final String characteristicName = "units";
+        Optional<AttributeType> units = Features.getCharacteristic(temperature(), characteristicName);
+        assertTrue("We should have found a characteristic for "+characteristicName, units.isPresent());
+        assertEquals("Characteristic name", characteristicName, units.get().getName().tip().toString());
+
+        // Even through a link, we should be able to find the characteristic
+        final LinkOperation link = new LinkOperation(Collections.singletonMap("name", "link for temperature"), temperature());
+        units = Features.getCharacteristic(link, characteristicName);
+        assertTrue("We should have found a characteristic for "+characteristicName, units.isPresent());
+        assertEquals("Characteristic name", characteristicName, units.get().getName().tip().toString());
+
+        // Now we'll check the commodity method to get directly the value
+        Optional<String> unitValue = Features.getCharacteristicValue(link, characteristicName);
+        assertTrue("We should have found a value for characteristic: "+characteristicName, unitValue.isPresent());
+        assertEquals("Unit value", "°C", unitValue.get());
+    }
+
+    @Test
+    public void getDefaultGeometry() {
+        try {
+            final PropertyType found = Features.getDefaultGeometry(capital());
+            fail("Utility method should fail on given feature type because no geometry is available in it, but returned: "+found);
+        } catch (PropertyNotFoundException e) {
+            // That's expected behavior
+        }
+
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder()
+                .setName("CapitalPosition")
+                .setSuperTypes(capital());
+
+        final AttributeTypeBuilder<?> geomBuilder = builder.addAttribute(GeometryType.POINT).setName("location");
+
+        final PropertyType geometry = Features.getDefaultGeometry(builder.build());
+        assertNotNull("Should have found the location", geometry);
+        assertEquals("Found attribute: ", "location", geometry.getName().tip().toString());
+
+        builder.addAttribute(GeometryType.POINT)
+                .setName("parliament.location");
+
+        try {
+            final PropertyType found = Features.getDefaultGeometry(builder.build());
+            fail("Ambiguity (two geometries available without convention) should prevent a result, but got: "+found);
+        } catch (IllegalStateException e) {
+            // Expected behavior
+        }
+
+        // We should be able to choose the SIS convention by default.
+        geomBuilder.addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final PropertyType found = Features.getDefaultGeometry(builder.build());
+        assertNotNull("Should have found the location", geometry);
+        assertEquals("Found attribute: ", "location", geometry.getName().tip().toString());
     }
 }
