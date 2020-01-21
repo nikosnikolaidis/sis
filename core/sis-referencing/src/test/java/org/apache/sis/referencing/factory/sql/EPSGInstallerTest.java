@@ -16,38 +16,44 @@
  */
 package org.apache.sis.referencing.factory.sql;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.regex.Pattern;
 import java.io.IOException;
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.opengis.util.FactoryException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import javax.sql.DataSource;
+
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
-import org.apache.sis.referencing.CommonCRS;
+import org.opengis.util.FactoryException;
+
+import org.apache.sis.internal.metadata.sql.Reflection;
 import org.apache.sis.internal.system.Loggers;
 import org.apache.sis.internal.util.Constants;
-import org.apache.sis.internal.metadata.sql.Reflection;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.test.DependsOn;
+import org.apache.sis.test.LoggingWatcher;
+import org.apache.sis.test.TestCase;
+import org.apache.sis.test.sql.TestDatabase;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Utilities;
 
-// Test dependencies
-import org.apache.sis.test.sql.TestDatabase;
-import org.apache.sis.test.LoggingWatcher;
-import org.apache.sis.test.DependsOn;
-import org.apache.sis.test.TestCase;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+
+// Test dependencies
 
 
 /**
@@ -159,6 +165,22 @@ public final strictfp class EPSGInstallerTest extends TestCase {
             verifyParameterValues(db.source);
         }
         loggings.assertNextLogContains("EPSG", "jdbc:hsqldb:mem:EPSGInstaller");
+        loggings.assertNoUnexpectedLog();
+    }
+    /**
+     * Tests the creation of an EPSG database on H2.
+     * This test is skipped if the SQL scripts are not found.
+     *
+     * @throws Exception if an error occurred while creating the database.
+     */
+    @Test
+    public void testCreationOnH2() throws Exception {
+        final InstallationScriptProvider scripts = getScripts();            // Needs to be invoked first.
+        try (TestDatabase db = TestDatabase.createOnH2("EPSGInstaller", false)) {
+            createAndTest(db.source, scripts);
+            verifyParameterValues(db.source);
+        }
+        loggings.assertNextLogContains("EPSG", "jdbc:h2:mem:EPSGInstaller");
         loggings.assertNoUnexpectedLog();
     }
 

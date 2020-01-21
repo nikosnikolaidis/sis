@@ -17,21 +17,26 @@
 package org.apache.sis.test.sql;
 
 import java.io.IOException;
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.SQLDataException;
-import org.postgresql.PGProperty;
-import org.postgresql.ds.PGSimpleDataSource;
-import org.hsqldb.jdbc.JDBCDataSource;
-import org.hsqldb.jdbc.JDBCPool;
-import org.apache.derby.jdbc.EmbeddedDataSource;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.sql.DataSource;
+
 import org.apache.sis.internal.metadata.sql.Initializer;
 import org.apache.sis.internal.metadata.sql.ScriptRunner;
 import org.apache.sis.test.TestCase;
 import org.apache.sis.util.Debug;
+
+import org.apache.derby.jdbc.EmbeddedDataSource;
+
+import org.h2.jdbcx.JdbcConnectionPool;
+import org.h2.jdbcx.JdbcDataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
+import org.hsqldb.jdbc.JDBCPool;
+import org.postgresql.PGProperty;
+import org.postgresql.ds.PGSimpleDataSource;
 
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
@@ -169,6 +174,28 @@ public strictfp class TestDatabase implements AutoCloseable {
                 }
                 if (pool != null) {
                     pool.close(2);
+                }
+            }
+        };
+    }
+
+    public static TestDatabase createOnH2(final String name, final boolean pooled) throws SQLException {
+        final String url = "jdbc:h2:mem:".concat(name).concat(";DB_CLOSE_DELAY=-1");
+        final DataSource ds;
+        if (pooled) {
+            // A null pointer exception occurs on pooled connection is not set
+            ds = JdbcConnectionPool.create(url, "sis", "sis");
+        } else {
+            final JdbcDataSource tmpDs = new JdbcDataSource();
+            tmpDs.setURL(url);
+            ds = tmpDs;
+        }
+
+        return new TestDatabase(ds) {
+            @Override
+            public void close() throws SQLException {
+                try (Connection c = ds.getConnection(); Statement s = c.createStatement()) {
+                    s.execute("SHUTDOWN");
                 }
             }
         };
