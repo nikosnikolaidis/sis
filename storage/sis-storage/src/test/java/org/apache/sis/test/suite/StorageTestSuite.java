@@ -44,6 +44,7 @@ import org.junit.BeforeClass;
     org.apache.sis.storage.FeatureNamingTest.class,
     org.apache.sis.storage.ProbeResultTest.class,
     org.apache.sis.storage.StorageConnectorTest.class,
+    org.apache.sis.storage.StrictStorageConnectorTest.class,
     org.apache.sis.storage.event.StoreListenersTest.class,
     org.apache.sis.internal.storage.query.CoverageQueryTest.class,
     org.apache.sis.internal.storage.query.SimpleQueryTest.class,
