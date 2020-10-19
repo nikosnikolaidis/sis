@@ -44,7 +44,7 @@ import org.apache.sis.filter.DefaultFilterFactory;
  * Tests {@link SimpleQuery} and (indirectly) {@link FeatureSubset}.
  *
  * @author  Johann Sorel (Geomatys)
- * @version 1.0
+ * @version 1.1
  * @since   1.0
  * @module
  */
@@ -193,5 +193,38 @@ public final strictfp class SimpleQueryTest extends TestCase {
         assertEquals(3, result.getPropertyValue("value1"));
         assertEquals(3, result.getPropertyValue("renamed1"));
         assertEquals("a literal", result.getPropertyValue("computed"));
+    }
+
+    /**
+     * Verifies the effect of {@link SimpleQuery#setColumns(SimpleQuery.Column...)} on an abstract feature type.
+     * We expect the column to be defined even if the property name is undefined on the feature type.
+     * This case happens when the {@link FeatureSet} contains features with inherited types.
+     *
+     * @throws DataStoreException if an error occurred while executing the query.
+     */
+    @Test
+    public void testColumnsAbstractType() throws DataStoreException {
+        final DefaultFilterFactory factory = new DefaultFilterFactory();
+        query.setColumns(new SimpleQuery.Column(factory.property("value1"),  (String) null),
+                         new SimpleQuery.Column(factory.property("unknown"), "unexpected"));
+        query.setLimit(1);
+
+        final FeatureSet fs = query.execute(featureSet);
+        final Feature result = TestUtilities.getSingleton(fs.features(false).collect(Collectors.toList()));
+
+        // Check result type.
+        final FeatureType resultType = result.getType();
+        assertEquals("Test", resultType.getName().toString());
+        assertEquals(2, resultType.getProperties(true).size());
+        final PropertyType pt1 = resultType.getProperty("value1");
+        final PropertyType pt2 = resultType.getProperty("unexpected");
+        assertTrue(pt1 instanceof AttributeType);
+        assertTrue(pt2 instanceof AttributeType);
+        assertEquals(Integer.class, ((AttributeType) pt1).getValueClass());
+        assertEquals(Object.class,  ((AttributeType) pt2).getValueClass());
+
+        // Check feature property values.
+        assertEquals(3,    result.getPropertyValue("value1"));
+        assertEquals(null, result.getPropertyValue("unexpected"));
     }
 }

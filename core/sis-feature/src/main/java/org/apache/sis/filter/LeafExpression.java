@@ -156,7 +156,13 @@ abstract class LeafExpression extends Node implements Expression, FeatureExpress
          */
         @Override
         public PropertyTypeBuilder expectedType(final FeatureType valueType, final FeatureTypeBuilder addTo) {
-            PropertyType type = valueType.getProperty(name);        // May throw IllegalArgumentException.
+            PropertyType type;
+            try {
+                type = valueType.getProperty(name);
+            } catch (IllegalArgumentException ex) {
+                // the property does not exist but may be defined on a yet unknown child type.
+                return addTo.addAttribute(Object.class).setName(name).setMinimumOccurs(0);
+            }
             while (type instanceof Operation) {
                 final IdentifiedType result = ((Operation) type).getResult();
                 if (result != type && result instanceof PropertyType) {
